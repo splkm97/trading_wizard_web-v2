@@ -2,7 +2,7 @@
  * SellModal component for recording a sale
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { PortfolioPosition } from '@trading-wizard/shared-ui/types';
 import { formatCurrency, getTodayString } from '../utils/priceCalculator';
 
@@ -17,6 +17,17 @@ function SellModal({ position, currentPrice, onSubmit, onClose }: SellModalProps
   const [price, setPrice] = useState(currentPrice?.toString() || '');
   const [quantity, setQuantity] = useState(position.quantity.toString());
   const [date, setDate] = useState(getTodayString());
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,10 +59,10 @@ function SellModal({ position, currentPrice, onSubmit, onClose }: SellModalProps
   const pnlPercent = investedAmount > 0 ? (pnl / investedAmount) * 100 : 0;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="sell-modal-title">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>매도 기록</h2>
+          <h2 id="sell-modal-title">매도 기록</h2>
           <button className="modal-close" onClick={onClose}>
             &times;
           </button>

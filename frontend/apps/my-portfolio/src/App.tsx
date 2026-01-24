@@ -22,7 +22,7 @@ function AppLayout({ children }: { children: React.ReactNode }) {
     },
     {
       label: 'Daily Focus',
-      href: 'http://localhost:3001',
+      href: import.meta.env.VITE_DAILY_FOCUS_URL || 'http://localhost:3001',
       active: false,
     },
   ];

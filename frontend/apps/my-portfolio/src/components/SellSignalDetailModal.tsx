@@ -2,6 +2,7 @@
  * SellSignalDetailModal component showing detailed sell signal information
  */
 
+import { useEffect } from 'react';
 import type { SellSignal } from '@trading-wizard/shared-ui/types';
 import SellSignalBadge from './SellSignalBadge';
 import { formatCurrency, formatPercent } from '../utils/priceCalculator';
@@ -37,11 +38,22 @@ function SellSignalDetailModal({
 }: SellSignalDetailModalProps) {
   const config = SIGNAL_DESCRIPTIONS[signal.type];
 
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="signal-modal-title">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{config.title}</h2>
+          <h2 id="signal-modal-title">{config.title}</h2>
           <button className="modal-close" onClick={onClose}>
             &times;
           </button>

@@ -43,6 +43,17 @@ function PortfolioPage() {
   const [sellModalPosition, setSellModalPosition] = useState<PortfolioPosition | null>(null);
   const [addBuyPosition, setAddBuyPosition] = useState<PortfolioPosition | null>(null);
 
+  // Handle Escape key to close add buy modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && addBuyPosition) {
+        setAddBuyPosition(null);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [addBuyPosition]);
+
   // Filter holding positions for API calls
   const holdingPositions = positions.filter((p) => p.status === 'holding');
 
@@ -209,10 +220,10 @@ function PortfolioPage() {
       )}
 
       {addBuyPosition && (
-        <div className="modal-overlay" onClick={() => setAddBuyPosition(null)}>
+        <div className="modal-overlay" onClick={() => setAddBuyPosition(null)} role="dialog" aria-modal="true" aria-labelledby="add-buy-modal-title">
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>추가 매수</h2>
+              <h2 id="add-buy-modal-title">추가 매수</h2>
               <button
                 className="modal-close"
                 onClick={() => setAddBuyPosition(null)}

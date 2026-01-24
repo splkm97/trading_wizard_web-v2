@@ -3,6 +3,7 @@
 POST /api/portfolio/calculate-pnl
 """
 
+import logging
 from datetime import datetime
 
 from fastapi import APIRouter
@@ -14,6 +15,8 @@ from backend.src.services.pnl_calculator import (
     calculate_position_pnl,
 )
 from shared.data.yfinance_client import get_stock_price
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -119,7 +122,7 @@ async def calculate_pnl(request: PnLCalculationRequest) -> PnLCalculationRespons
             position_responses.append(PositionPnLResponse.from_position_pnl(pnl))
 
         except Exception as e:
-            print(f"Error calculating PnL for position {position.id}: {e}")
+            logger.warning("Error calculating PnL for position %s: %s", position.id, e)
             continue
 
     # Calculate portfolio totals

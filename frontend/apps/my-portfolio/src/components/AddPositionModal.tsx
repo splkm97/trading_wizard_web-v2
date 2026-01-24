@@ -2,7 +2,7 @@
  * AddPositionModal component for adding a new position
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Stock } from '@trading-wizard/shared-ui/types';
 import StockSearchInput from './StockSearchInput';
 import BuyForm from './BuyForm';
@@ -19,6 +19,17 @@ interface AddPositionModalProps {
 
 function AddPositionModal({ onSubmit, onClose }: AddPositionModalProps) {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
+
+  // Handle Escape key to close modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const handleStockSelect = (stock: Stock) => {
     setSelectedStock(stock);
@@ -41,10 +52,10 @@ function AddPositionModal({ onSubmit, onClose }: AddPositionModalProps) {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{selectedStock ? '매수 정보 입력' : '종목 추가'}</h2>
+          <h2 id="modal-title">{selectedStock ? '매수 정보 입력' : '종목 추가'}</h2>
           <button className="modal-close" onClick={onClose}>
             &times;
           </button>

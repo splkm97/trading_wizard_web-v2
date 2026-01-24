@@ -3,6 +3,7 @@
 POST /api/portfolio/sell-signals
 """
 
+import logging
 from datetime import datetime
 
 from fastapi import APIRouter
@@ -15,6 +16,8 @@ from backend.src.services.sell_signal import (
     generate_sell_signals,
 )
 from shared.data.yfinance_client import get_stock_history, get_stock_price
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -138,7 +141,7 @@ async def get_sell_signals(request: SellSignalRequest) -> SellSignalListResponse
 
         except Exception as e:
             # Log error but continue with other positions
-            print(f"Error processing position {position.id}: {e}")
+            logger.warning("Error processing position %s: %s", position.id, e)
             continue
 
     return SellSignalListResponse(
