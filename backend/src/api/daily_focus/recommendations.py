@@ -36,6 +36,14 @@ class ParametersResponse(BaseModel):
     bollingerPeriod: int
     bollingerStdDev: float
     confidenceThreshold: float
+    squeezeThresholdPct: float
+    squeezeLookbackDays: int
+    bbWidthMAPeriod: int
+    rsiPeriod: int
+    macdFast: int
+    macdSlow: int
+    macdSignal: int
+    volumeAvgPeriod: int
     trendLookbackDays: int
     trendBelowMaThreshold: int
     trendMaSlopeLookback: int
@@ -57,6 +65,14 @@ async def get_recommendations(
     confidence_threshold: float = Query(55.0, ge=0, le=100, alias="confidence_threshold"),
     bollinger_period: int = Query(12, ge=5, le=50, alias="bollinger_period"),
     bollinger_std_dev: float = Query(1.3, ge=0.5, le=3.0, alias="bollinger_std_dev"),
+    squeeze_threshold_pct: float = Query(55.0, ge=0, le=100, alias="squeeze_threshold_pct"),
+    squeeze_lookback_days: int = Query(5, ge=1, le=30, alias="squeeze_lookback_days"),
+    bb_width_ma_period: int = Query(10, ge=5, le=50, alias="bb_width_ma_period"),
+    rsi_period: int = Query(14, ge=5, le=50, alias="rsi_period"),
+    macd_fast: int = Query(12, ge=5, le=50, alias="macd_fast"),
+    macd_slow: int = Query(26, ge=10, le=100, alias="macd_slow"),
+    macd_signal: int = Query(9, ge=3, le=50, alias="macd_signal"),
+    volume_avg_period: int = Query(20, ge=5, le=100, alias="volume_avg_period"),
     trend_lookback_days: int = Query(20, ge=5, le=60, alias="trend_lookback_days"),
     trend_below_ma_threshold: int = Query(15, ge=1, le=60, alias="trend_below_ma_threshold"),
     trend_ma_slope_lookback: int = Query(10, ge=1, le=30, alias="trend_ma_slope_lookback"),
@@ -72,6 +88,14 @@ async def get_recommendations(
             confidence_threshold=confidence_threshold,
             bollinger_period=bollinger_period,
             bollinger_std_dev=bollinger_std_dev,
+            squeeze_threshold_pct=squeeze_threshold_pct,
+            squeeze_lookback_days=squeeze_lookback_days,
+            bb_width_ma_period=bb_width_ma_period,
+            rsi_period=rsi_period,
+            macd_fast=macd_fast,
+            macd_slow=macd_slow,
+            macd_signal=macd_signal,
+            volume_avg_period=volume_avg_period,
             trend_lookback_days=trend_lookback_days,
             trend_below_ma_threshold=trend_below_ma_threshold,
             trend_ma_slope_lookback=trend_ma_slope_lookback,
@@ -122,9 +146,17 @@ async def get_recommendations(
             totalScanned=result.total_scanned,
             generatedAt=result.generated_at,
             parameters=ParametersResponse(
-                bollingerPeriod=result.parameters["bollingerPeriod"],
-                bollingerStdDev=result.parameters["bollingerStdDev"],
-                confidenceThreshold=result.parameters["confidenceThreshold"],
+                bollingerPeriod=bollinger_period,
+                bollingerStdDev=bollinger_std_dev,
+                confidenceThreshold=confidence_threshold,
+                squeezeThresholdPct=squeeze_threshold_pct,
+                squeezeLookbackDays=squeeze_lookback_days,
+                bbWidthMAPeriod=bb_width_ma_period,
+                rsiPeriod=rsi_period,
+                macdFast=macd_fast,
+                macdSlow=macd_slow,
+                macdSignal=macd_signal,
+                volumeAvgPeriod=volume_avg_period,
                 trendLookbackDays=trend_lookback_days,
                 trendBelowMaThreshold=trend_below_ma_threshold,
                 trendMaSlopeLookback=trend_ma_slope_lookback,
