@@ -122,6 +122,14 @@ def should_refresh_history(
 
     # Case: Market is currently open
     if is_korean_market_open():
+        # BUG FIX: Force refresh if cached data doesn't include today's date
+        # This ensures we always fetch today's data during market hours,
+        # even if the last fetch was recent but only contained yesterday's close.
+        today = today_kst()
+        if cached_period_end < today:
+            return True
+
+        # If we have today's data, only refresh after 30 min interval
         elapsed = now - last_fetched_at
         return elapsed.total_seconds() > INTRADAY_REFRESH_MINUTES * 60
 
